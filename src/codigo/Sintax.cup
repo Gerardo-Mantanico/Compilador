@@ -1,0 +1,158 @@
+package codigo;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    private Symbol s;
+    
+    public void syntax_error(Symbol s){
+        this.s = s;
+    }
+
+    public Symbol getS(){
+        return this.s;
+}
+:};
+
+/*terminal*/
+terminal Linea, Comillas, Tipo_de_variable, Entero, Cadena, Flotante, Si, Sino, Mientras, Para,
+    Igual, Suma, Resta, Multiplicacion, Division, Asignacion, Op_relacional,Coma,
+    Op_booleano, Parentesis_a, Parentesis_c,
+    Llave_a, Llave_c, P_coma, Identificador,
+    Numero_entero, Numero_flotante, Leer, Escribir, ERROR, Numeral;
+
+/*no terminal*/
+non terminal   DECLARACION,SENTENCIA_CADENA, LEER, ESCRIBIR, 
+SENTENCIA_ESCRIBIR, IMPRIMIR_TEXTO, SI, CONDICION, SINO, SICLO_PARA, INSTRUCCION, INSTRUCCIONES, TEXTO,TEXTO_REPETIDO, VARIABLE, PASAR_PARAMETRO,TIPO_VARIABLE,OPERECION_BASICA,SINGO_OPERECION;
+
+SENTENCIA ::= 
+  SENTENCIA_CADENA 
+;
+
+INSTRUCCIONES ::=
+    INSTRUCCIONES DECLARACION |
+    DECLARACION |
+    INSTRUCCIONES SI |
+    SI |
+    INSTRUCCIONES SINO |
+    SINO |
+    INSTRUCCIONES SICLO_PARA |
+    SICLO_PARA |
+    INSTRUCCIONES ESCRIBIR |
+    ESCRIBIR |
+    INSTRUCCIONES LEER |
+    LEER |
+    INSTRUCCIONES PASAR_PARAMETRO |
+    PASAR_PARAMETRO 
+;
+
+PASAR_PARAMETRO ::=
+    Numeral Identificador  Asignacion  TIPO_VARIABLE   P_coma
+;
+
+TIPO_VARIABLE ::=
+    Numero_entero |
+    Numero_flotante |
+    Identificador |
+    IMPRIMIR_TEXTO |
+    OPERECION_BASICA 
+    
+; 
+OPERECION_BASICA ::=
+    SENTENCIA_CADENA SINGO_OPERECION SENTENCIA_CADENA 
+;
+SINGO_OPERECION ::=
+    Suma |
+    Resta |
+    Multiplicacion |
+    Division
+;
+
+SICLO_PARA ::=
+    Para Parentesis_a  VARIABLE  VARIABLE Parentesis_c   Llave_a INSTRUCCION Llave_c
+;
+
+VARIABLE ::=
+    Identificador | 
+    Numero_entero 
+;
+
+INSTRUCCION ::=
+    ESCRIBIR |
+    LEER     
+;
+
+SINO ::=
+    Sino Llave_a  INSTRUCCION  Llave_c 
+;
+
+SI ::=
+    Si Parentesis_a CONDICION Parentesis_c Llave_a INSTRUCCION  Llave_c 
+;
+
+CONDICION ::=
+    SENTENCIA_CADENA Op_relacional  SENTENCIA_CADENA
+; 
+
+
+
+ESCRIBIR ::=
+    Escribir Parentesis_a SENTENCIA_ESCRIBIR Parentesis_c  P_coma
+;
+
+SENTENCIA_ESCRIBIR ::=
+    Identificador |
+    IMPRIMIR_TEXTO
+
+;
+
+IMPRIMIR_TEXTO ::=
+    Comillas TEXTO_REPETIDO Comillas 
+;
+
+TEXTO_REPETIDO ::=
+    SENTENCIA_CADENA |
+    SENTENCIA_CADENA TEXTO_REPETIDO |
+    TEXTO |
+    TEXTO TEXTO_REPETIDO
+    
+
+;
+
+TEXTO ::=
+    Entero| Cadena| Flotante| Si| Sino| Mientras| Para|
+    Igual| Suma| Resta| Multiplicacion| Division| Asignacion| Op_relacional | Coma |
+    Parentesis_a | Parentesis_c |
+    Llave_a | Llave_c |  P_coma | ERROR
+;
+ 
+
+LEER ::=
+     Leer Parentesis_a Identificador  Parentesis_c P_coma
+;
+
+
+DECLARACION ::=  
+    Entero Identificador P_coma | 
+    Entero Identificador Asignacion Numero_entero P_coma |
+    Cadena Identificador P_coma |
+    Cadena Identificador Asignacion Comillas TEXTO_REPETIDO Comillas P_coma |
+    Flotante Identificador P_coma |
+    Flotante Identificador Asignacion  Numero_flotante P_coma
+;
+SENTENCIA_CADENA ::=
+    Identificador | 
+    Numero_entero | 
+    Numero_flotante 
+;
+
+
+
+
+
+
+
+    
+
+
