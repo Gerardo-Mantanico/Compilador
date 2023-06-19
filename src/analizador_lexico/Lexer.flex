@@ -1,4 +1,4 @@
-package codigo;
+package analizador_lexico;
 import compilerTools.Token;
 
 %%
@@ -7,7 +7,7 @@ import compilerTools.Token;
 %line
 %column
 %{
-     public String lexeme;
+    public String lexeme;
     private Token token(String lexeme, String lexicalComp, int line, int column){
         return new Token(lexeme, lexicalComp, line+1, column+1);
     }
@@ -49,6 +49,17 @@ espacio=[ ,\t,\r]+
 
 /* Palabra reservada While */
 ( MIENTRAS ) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }
+
+/* palabra reservada swich*/
+
+/* Palabra reservada While */
+( CUANDO ) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }
+
+/* palabra reservada case */
+( CASO ) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }
+
+/* Palabra reservada break */
+( FIN ) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }
 
 /* Palabra reservada For */
 ( PARA ) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }

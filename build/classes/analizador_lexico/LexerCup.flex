@@ -1,4 +1,4 @@
-package codigo;
+package  analizador_lexico;
 import java_cup.runtime.Symbol;
 %%
 %class LexerCup
@@ -44,7 +44,7 @@ espacio=[ ,\t,\r,\n]+
 /* Palabra reservada Escribir */
 ( ESCRIBIR ) {return new Symbol(sym.Escribir, yychar, yyline, yytext());}
 
-/* Palabra reservada Escribir */
+/* Palabra reservada Leer */
 ( LEER ) {return new Symbol(sym.Leer, yychar, yyline, yytext());}
 
 /* Palabra reservada If */
@@ -53,10 +53,18 @@ espacio=[ ,\t,\r,\n]+
 /* Palabra reservada Else */
 ( SINO ) {return new Symbol(sym.Sino, yychar, yyline, yytext());}
 
-
 /* Palabra reservada While */
 ( MIENTRAS ) {return new Symbol(sym.Mientras, yychar, yyline, yytext());}
 
+/* Palabra reservada swich */
+( CUANDO ) {return new Symbol(sym.Cuando, yychar, yyline, yytext());}
+
+/* Palabra reservada case */
+( CASO ) {return new Symbol(sym.Caso, yychar, yyline, yytext());}
+
+/* Palabra reservada break */
+( FIN ) {return new Symbol(sym.Fin, yychar, yyline, yytext());}
+ 
 /* Palabra reservada For */
 ( PARA ) {return new Symbol(sym.Para, yychar, yyline, yytext());}
 

@@ -1,10 +1,10 @@
-package codigo;
+package sintactica;
 
 import java_cup.runtime.Symbol;
 
 parser code
 {:
-    private Symbol s;
+    public Symbol s;
     
     public void syntax_error(Symbol s){
         this.s = s;
@@ -20,11 +20,12 @@ terminal Linea, Comillas, Tipo_de_variable, Entero, Cadena, Flotante, Si, Sino, 
     Igual, Suma, Resta, Multiplicacion, Division, Asignacion, Op_relacional,Coma,
     Op_booleano, Parentesis_a, Parentesis_c,
     Llave_a, Llave_c, P_coma, Identificador,
-    Numero_entero, Numero_flotante, Leer, Escribir, ERROR, Numeral;
+    Numero_entero, Numero_flotante, Leer, Escribir, ERROR, Numeral,Cuando, Caso, Fin;
 
 /*no terminal*/
 non terminal   DECLARACION,SENTENCIA_CADENA, LEER, ESCRIBIR, 
-SENTENCIA_ESCRIBIR, IMPRIMIR_TEXTO, SI, CONDICION, SINO, SICLO_PARA, INSTRUCCION, INSTRUCCIONES, TEXTO,TEXTO_REPETIDO, VARIABLE, PASAR_PARAMETRO,TIPO_VARIABLE,OPERECION_BASICA,SINGO_OPERECION;
+SENTENCIA_ESCRIBIR, IMPRIMIR_TEXTO, SI, CONDICION, SINO, SICLO_PARA, INSTRUCCION, INSTRUCCIONES, TEXTO,TEXTO_REPETIDO, VARIABLE, PASAR_PARAMETRO,TIPO_VARIABLE,OPERECION_BASICA,
+SINGO_OPERECION,SIGLO_MIENTRAS, SIGLO_CUANDO, CASO, SENTENCIA_CASO, INSTRUCCIONES_CASO;
 
 SENTENCIA ::= 
   SENTENCIA_CADENA 
@@ -44,7 +45,40 @@ INSTRUCCIONES ::=
     INSTRUCCIONES LEER |
     LEER |
     INSTRUCCIONES PASAR_PARAMETRO |
-    PASAR_PARAMETRO 
+    PASAR_PARAMETRO |
+    INSTRUCCIONES SIGLO_MIENTRAS |
+    SIGLO_MIENTRAS |
+    INSTRUCCIONES SIGLO_CUANDO |
+    SIGLO_CUANDO
+;
+
+
+/*SIGLO SWICH */
+
+SIGLO_CUANDO ::=
+    Cuando Parentesis_a  Identificador  Parentesis_c  Llave_a  INSTRUCCIONES_CASO   Llave_c
+;
+
+INSTRUCCIONES_CASO ::=
+    INSTRUCCIONES_CASO CASO |
+    CASO
+;
+
+/*CASE*/
+CASO ::=
+    Caso SENTENCIA_CASO  Asignacion  Llave_a  INSTRUCCION   Llave_c
+;
+
+/* codicion swich*/
+SENTENCIA_CASO ::=
+    Numero_entero |
+    IMPRIMIR_TEXTO
+;
+
+
+/* SIGLO MIENTAS*/
+SIGLO_MIENTRAS ::=
+     Mientras Parentesis_a  CONDICION  Parentesis_c  Llave_a  INSTRUCCION  Llave_c
 ;
 
 PASAR_PARAMETRO ::=
@@ -79,8 +113,13 @@ VARIABLE ::=
 ;
 
 INSTRUCCION ::=
-    ESCRIBIR |
-    LEER     
+   INSTRUCCION ESCRIBIR |
+   ESCRIBIR |
+   INSTRUCCION LEER | 
+   LEER |
+   INSTRUCCION PASAR_PARAMETRO |
+   PASAR_PARAMETRO
+   
 ;
 
 SINO ::=
@@ -94,7 +133,6 @@ SI ::=
 CONDICION ::=
     SENTENCIA_CADENA Op_relacional  SENTENCIA_CADENA
 ; 
-
 
 
 ESCRIBIR ::=
