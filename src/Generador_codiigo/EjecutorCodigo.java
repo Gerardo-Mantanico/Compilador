@@ -9,8 +9,10 @@ import compilerTools.CodeBlock;
 import compilerTools.Token;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+import recursos.GeneradorBloques;
 import semantica.Semantico;
 
 /**
@@ -22,11 +24,11 @@ public class EjecutorCodigo {
     private ArrayList<Variable> lista_variable;
     private JTextArea textArea;
     private Semantico  analizador_semantico;
+    private Map<String, ArrayList<Token>> bloqueMetodoFunciones;
     public EjecutorCodigo(JTextArea textArea) {
         this.textArea = textArea;
         this.lista_variable = new ArrayList<>();
         analizador_semantico = new Semantico();
-
     }
 
     public void ejecutarCodigo(ArrayList<Token> tokens) {
@@ -47,7 +49,7 @@ public class EjecutorCodigo {
             int repeatCode = -1;
             for (int i = 0; i < blocksOfCode.size(); i++) {
                 String blockOfCode = blocksOfCode.get(i);
-               // System.out.println("block    ---->"+blockOfCode +"  i="+i);
+              // System.out.println("block    ---->"+ blocksOfCode.get(i));
                 if (repeatCode != -1) {
                     int[] posicionMarcador = CodeBlock.getPositionOfBothMarkers(blocksOfCode, blockOfCode);
                     executeCode(new ArrayList<>(blocksOfCode.subList(posicionMarcador[0], posicionMarcador[1])), repeatCode);
@@ -58,6 +60,7 @@ public class EjecutorCodigo {
                     // System.out.println("block    ---->"+blockOfCode);
                     for (String sentence : sentences) {
                          sentence = sentence.trim();
+                                            
                          //CODIGO PARAR ESCRIBIR
                          if (sentence.startsWith("ESCRIBIR")) {
                             String parametro;
@@ -164,7 +167,6 @@ public class EjecutorCodigo {
                             else {
                                 repeatCode++;
                             }
-                            
                         }
                         
                         //SWICH
@@ -176,7 +178,6 @@ public class EjecutorCodigo {
                                 int v= (int) f;
                                 auxi= String.valueOf(v);
                             }catch(NumberFormatException ex){ auxi=retor_variable(campos[2]);}
-                           
                         }
                         //case
                         else if (sentence.startsWith("CASO")){
@@ -188,6 +189,35 @@ public class EjecutorCodigo {
                             else{
                                 if(auxi.equals(campos[1])){}
                                 else{repeatCode=repeatCode+1;}
+                            }
+                        }                   
+                      //funciones
+                        else if(sentence.startsWith("FUNCION")){
+                        }
+                        
+                        //procedimiento 
+                         else if(sentence.startsWith("PROCEDIMIENTO")){
+                          String [] campo= sentence.split(" ");
+                          System.out.println("procedimiento"+campo);
+                         }
+                         
+                         
+                        else { 
+                            String [] campos=sentence.split(" ");
+                           
+                            if(campos.length>2){
+                                 System.out.println("-*-*-* "+campos[0]);
+                                if(bloqueMetodoFunciones.get(campos[0])!=null){
+                                    CodigoFunciones codigo = new CodigoFunciones(textArea,lista_variable,campos);
+                                    codigo.ejecutarCodigo(bloqueMetodoFunciones.get(campos[0]));
+                                    ejecutarCodigo(bloqueMetodoFunciones.get(campos[0])); 
+                                    
+                                }
+                                else {
+                                    textArea.append("la funcion no esta declarada:" +campos[0] +"\n"); 
+                                    textArea.setForeground(Color.red);
+                                }
+                                
                             }
                         }
                     }
@@ -416,4 +446,9 @@ public class EjecutorCodigo {
         }
         return auxi;    
     }
+
+    public void setBloqueMetodoFunciones(Map<String, ArrayList<Token>> bloqueMetodoFunciones) {
+        this.bloqueMetodoFunciones = bloqueMetodoFunciones;
+    }
+    
 }

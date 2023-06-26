@@ -23,8 +23,8 @@ public class Principal {
         generar(ruta1, ruta2, rutaS);
     }
     public static void generar(String ruta1, String ruta2, String[] rutaS) throws IOException, Exception{
-        File archivo;
-        /*archivo = new File(ruta1);
+       /* File archivo;
+        archivo = new File(ruta1);
         JFlex.Main.generate(archivo);
         archivo = new File(ruta2);
         JFlex.Main.generate(archivo);*/
@@ -47,4 +47,5 @@ public class Principal {
                 Paths.get("C:/Users/HP/Documents/NetBeansProjects/AnalizadorLexico/src/sintactica/Sintax.java")
         );
     }
+       
 }

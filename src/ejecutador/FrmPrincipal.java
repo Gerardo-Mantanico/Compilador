@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java_cup.runtime.Symbol;
 import javax.swing.JFileChooser;
+import recursos.GeneradorBloques;
 import recursos.NumeroLinea;
 import sintactica.Sintax;
 
@@ -39,6 +40,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private HashMap<String, String> identificadores;
     private EjecutorCodigo ejecutorCodigo;
     private NumeroLinea numeroLinea;
+    private GeneradorBloques   GB=new GeneradorBloques(tokens);
     public FrmPrincipal() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -52,7 +54,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private void analizarLexico() throws IOException{
         int cont = 1;
         String expr = (String) txtResultado.getText(); 
-         Lexer lexer = new Lexer(new StringReader(expr));
+        Lexer lexer = new Lexer(new StringReader(expr));
         String resultado = "LINEA " + cont + "\t\tSIMBOLO\n";
         while (true) {
             Token token = lexer.yylex();
@@ -157,7 +159,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAnalizarSinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarSinActionPerformed
-        // TODO add your handling code here:
+
         this.txtAnalizarSin.setText("");
         this.txtAnalizarSin.setVisible(true);
         this.tokens.clear();
@@ -168,7 +170,9 @@ public class FrmPrincipal extends javax.swing.JFrame {
             s.parse();
             txtAnalizarSin.setText("Analisis realizado correctamente \n");
             txtAnalizarSin.setForeground(new Color(25, 111, 61));
-            ejecutorCodigo.ejecutarCodigo(tokens);
+            GB.bloques();
+            ejecutorCodigo.setBloqueMetodoFunciones(GB.getBloqueMetodoFunciones());
+            ejecutorCodigo.ejecutarCodigo(GB.getListPrincipal()); 
         } catch (Exception ex) {
             Symbol sym = s.getS();
             txtAnalizarSin.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");

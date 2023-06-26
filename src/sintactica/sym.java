@@ -17,6 +17,7 @@ public class sym {
   public static final int Numero_flotante = 28;
   public static final int Numeral = 32;
   public static final int Asignacion = 17;
+  public static final int Principal = 36;
   public static final int Leer = 29;
   public static final int Numero_entero = 27;
   public static final int Para = 11;
@@ -24,14 +25,15 @@ public class sym {
   public static final int Flotante = 7;
   public static final int Cadena = 6;
   public static final int Parentesis_c = 22;
-  public static final int Fin = 35;
   public static final int Parentesis_a = 21;
   public static final int Tipo_de_variable = 4;
   public static final int EOF = 0;
   public static final int P_coma = 25;
   public static final int error = 1;
+  public static final int Funcion = 37;
   public static final int Caso = 34;
   public static final int Linea = 2;
+  public static final int Devolver = 35;
   public static final int ERROR = 31;
   public static final int Identificador = 26;
   public static final int Si = 8;
@@ -40,6 +42,7 @@ public class sym {
   public static final int Sino = 9;
   public static final int Escribir = 30;
   public static final int Mientras = 10;
+  public static final int Procedimiento = 38;
   public static final int Multiplicacion = 15;
   public static final int Suma = 13;
   public static final int Igual = 12;
@@ -80,7 +83,10 @@ public class sym {
   "Numeral",
   "Cuando",
   "Caso",
-  "Fin"
+  "Devolver",
+  "Principal",
+  "Funcion",
+  "Procedimiento"
   };
 }
 

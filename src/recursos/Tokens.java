@@ -10,6 +10,7 @@ package recursos;
  * @author Charly Ponce
  */
 public enum Tokens {
+    Devolver,
     Linea,
     Comillas,
     Tipo_de_variable,
@@ -39,5 +40,8 @@ public enum Tokens {
     Numero_flotante,
     Escribir,
     Leer,
+    Principal,
+    Funcion,
+    Procedimiento,
     ERROR;
 }

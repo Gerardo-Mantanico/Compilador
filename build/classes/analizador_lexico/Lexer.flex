@@ -5,6 +5,7 @@ import compilerTools.Token;
 %class Lexer
 %type Token
 %line
+%public 
 %column
 %{
     public String lexeme;
@@ -46,6 +47,9 @@ espacio=[ ,\t,\r]+
 /* Palabra reservada Else */
 ( SINO ) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }
 
+/* Palabra reservada Main */
+( PRINCIPAL ) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }
+
 
 /* Palabra reservada While */
 ( MIENTRAS ) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }
@@ -58,8 +62,14 @@ espacio=[ ,\t,\r]+
 /* palabra reservada case */
 ( CASO ) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }
 
+/*Funcion */
+ (FUNCION) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }
+
+/*Procedimiento */
+ (PROCEDIMIENTO) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }
+
 /* Palabra reservada break */
-( FIN ) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }
+( DEVOLVER ) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }
 
 /* Palabra reservada For */
 ( PARA ) { return token(yytext(), "PALABRA_RESERVADA", yyline, yycolumn); }

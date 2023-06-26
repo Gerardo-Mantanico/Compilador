@@ -2,6 +2,7 @@ package  analizador_lexico;
 import java_cup.runtime.Symbol;
 %%
 %class LexerCup
+%public
 %type java_cup.runtime.Symbol
 /* para regresar el analisis*/
 %cup
@@ -31,6 +32,14 @@ espacio=[ ,\t,\r,\n]+
 /* Comillas */
 ( "\"" ) {return new Symbol(sym.Comillas, yychar, yyline, yytext());}
 
+/*Palabra reservada Procedimiento*/
+(PROCEDIMIENTO) {return new Symbol(sym.Procedimiento, yychar, yyline, yytext());}
+
+/*Palabra reservada funcion*/
+(FUNCION) {return new Symbol(sym.Funcion, yychar, yyline, yytext());}
+
+/*Palabra reservada return */
+(DEVOLVER) {return new Symbol(sym.Devolver, yychar, yyline, yytext());}
 
 /* tipo de varible entero*/
 (ENTERO) {return new Symbol(sym.Entero, yychar, yyline, yytext());}
@@ -50,6 +59,9 @@ espacio=[ ,\t,\r,\n]+
 /* Palabra reservada If */
 ( SI ) {return new Symbol(sym.Si, yychar, yyline, yytext());}
 
+/* Palabra reservada Main */
+( PRINCIPAL ) {return new Symbol(sym.Principal, yychar, yyline, yytext());}
+
 /* Palabra reservada Else */
 ( SINO ) {return new Symbol(sym.Sino, yychar, yyline, yytext());}
 
@@ -62,11 +74,10 @@ espacio=[ ,\t,\r,\n]+
 /* Palabra reservada case */
 ( CASO ) {return new Symbol(sym.Caso, yychar, yyline, yytext());}
 
-/* Palabra reservada break */
-( FIN ) {return new Symbol(sym.Fin, yychar, yyline, yytext());}
  
 /* Palabra reservada For */
 ( PARA ) {return new Symbol(sym.Para, yychar, yyline, yytext());}
+
 
 /* Operador Igual */
 ( "=" ) {return new Symbol(sym.Igual, yychar, yyline, yytext());}

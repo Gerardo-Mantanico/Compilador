@@ -12,6 +12,7 @@ public class Variable {
     private String nombre;
     private String valor;
     private String tipo;
+    
    
     public Variable(String nombre, String valor,String tipo){
         this.nombre=nombre;
