@@ -98,11 +98,37 @@ public class EjecutorCodigo {
                                }
                            }
                         }
-                        // pasando parametros
-                        else if(sentence.startsWith("#")){
-                           if(pasar_parametros(sentence)==false){return;}
-                        }
-
+                         // pasando parametros
+                         else if (sentence.startsWith("#")) {
+                             String campo[] = sentence.split(" ");
+                             if (campo.length > 4 && campo[4].equals("(")) {
+                                 String subCampo[] = sentence.split(":");
+                                 System.out.println("Asignacion  ////p"+subCampo[1]);
+                                 boolean estado=false;
+                                 for(Variable  v: lista_variable){
+                                     if(v.getNombre().equals(subCampo[1])){
+                                         for(Variable var: lista_variable){
+                                             if(var.getNombre().equals(campo[1])){
+                                               var.setValor(v.getValor());
+                                               estado=true;
+                                             }
+                                         }
+                                         if(estado==false){ textArea.append("la variable no esta declarada "+campo[1]+ "\n");
+                                         textArea.setForeground(Color.red); 
+                                          return;
+                                         }
+                                         estado=true;
+                                     }
+                                 }
+                                 if(estado==false){textArea.append("la  funcion no existe "+subCampo[1]+ "\n");
+                                         textArea.setForeground(Color.red);
+                                         return;
+                                 }
+                             }
+                             else { if(pasar_parametros(sentence) == false) {
+                                 return;
+  }                           }
+                         }
                         //DECLARACION DE VARIABLE
                         else if (sentence.startsWith("ENTERO")) {
                            if(declarar_variable(sentence)==true){return;}
@@ -264,8 +290,8 @@ public class EjecutorCodigo {
                                         lista_auxi.clear();
                                         if(codigo.getError()!=""){return;}
                                         if(codigo.getTipo().equals("FUNCION")){
-                                            System.out.println("nombre de variable "+sentence +"el valor es "+codigo.getLista_variable().get(0).getValor());
-                                           lista_variable.add(new Variable( sentence, codigo.getLista_variable().get(0).getValor(),""));
+                                            System.out.println("nombre de variable "+sentence +" el valor es "+codigo.getLista_variable().get(0).getValor());
+                                           lista_variable.add(new Variable( " "+sentence, codigo.getLista_variable().get(0).getValor(),"FUNCION"));
                                            
                                         }
                                     }

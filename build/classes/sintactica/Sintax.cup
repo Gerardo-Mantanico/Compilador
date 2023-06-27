@@ -155,7 +155,8 @@ SIGLO_MIENTRAS ::=
 ;
 
 PASAR_PARAMETRO ::=
-    Numeral Identificador  Asignacion  TIPO_VARIABLE   P_coma
+    Numeral Identificador  Asignacion  TIPO_VARIABLE   P_coma |
+    Numeral Identificador  Asignacion   INVOCACION_FP
 ;
 
 TIPO_VARIABLE ::=
@@ -163,8 +164,7 @@ TIPO_VARIABLE ::=
     Numero_flotante |
     Identificador |
     IMPRIMIR_TEXTO |
-    OPERECION_BASICA 
-    
+    OPERECION_BASICA
 ; 
 OPERECION_BASICA ::=
     SENTENCIA_CADENA SINGO_OPERECION SENTENCIA_CADENA 
