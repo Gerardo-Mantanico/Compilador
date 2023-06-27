@@ -40,7 +40,7 @@ public class GeneradorBloques {
                         listPrincipal.add(token);
                     } else if (token.getLexeme().equals("FUNCION")) {
                         listfun = new ArrayList<>();
-                        estado = 2;
+                        estado = 2; 
                         listfun.add(token);
                         
                     }

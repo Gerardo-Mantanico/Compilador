@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package Generador_codiigo;
 
 import recursos.Variable;
@@ -22,9 +19,11 @@ import semantica.Semantico;
 public class EjecutorCodigo {
 
     private ArrayList<Variable> lista_variable;
+    private ArrayList<String> lista_auxi= new ArrayList();
     private JTextArea textArea;
     private Semantico  analizador_semantico;
     private Map<String, ArrayList<Token>> bloqueMetodoFunciones;
+    private String error = "";
     public EjecutorCodigo(JTextArea textArea) {
         this.textArea = textArea;
         this.lista_variable = new ArrayList<>();
@@ -198,26 +197,40 @@ public class EjecutorCodigo {
                         //procedimiento 
                          else if(sentence.startsWith("PROCEDIMIENTO")){
                           String [] campo= sentence.split(" ");
-                          System.out.println("procedimiento"+campo);
+                           variabales_funPro(campo);
+                             if (error != "") {
+                                 this.textArea.append(error);
+                                 textArea.setForeground(Color.red);
+                                 return;
+                             }
+                            if(lista_variable.size()==lista_auxi.size()){
+                                agregar_valores();
+                            }
+                            else{ textArea.append(" error en procedimiento suma" + campo[1] + "\n");
+                                    textArea.setForeground(Color.red);}
                          }
-                         
-                         
-                        else { 
-                            String [] campos=sentence.split(" ");
-                           
-                            if(campos.length>2){
-                                 System.out.println("-*-*-* "+campos[0]);
-                                if(bloqueMetodoFunciones.get(campos[0])!=null){
-                                    CodigoFunciones codigo = new CodigoFunciones(textArea,lista_variable,campos);
+              
+                         else {
+                            String[] campos = sentence.split(" ");
+                            if (campos.length > 2) {
+                                if (bloqueMetodoFunciones.get(campos[0]) != null) {
+                                    if (campos.length > 3) {
+                                        agregar_dato_fp(campos);
+                                        if (error != "") {
+                                            this.textArea.append(error);
+                                            textArea.setForeground(Color.red);
+                                            return;
+                                        }
+                                    }
+                                    CodigoFunciones codigo = new CodigoFunciones(this.textArea);
+                                    codigo.setLista_auxi(lista_auxi);
+                                    System.out.println("lista auxi "+codigo.getLista_auxi().get(0));
                                     codigo.ejecutarCodigo(bloqueMetodoFunciones.get(campos[0]));
-                                    ejecutarCodigo(bloqueMetodoFunciones.get(campos[0])); 
-                                    
-                                }
-                                else {
-                                    textArea.append("la funcion no esta declarada:" +campos[0] +"\n"); 
+                                } else {
+                                    textArea.append("la funcion no esta declarada:" + campos[0] + "\n");
                                     textArea.setForeground(Color.red);
                                 }
-                                
+
                             }
                         }
                     }
@@ -450,5 +463,80 @@ public class EjecutorCodigo {
     public void setBloqueMetodoFunciones(Map<String, ArrayList<Token>> bloqueMetodoFunciones) {
         this.bloqueMetodoFunciones = bloqueMetodoFunciones;
     }
+    
+    
+    //declarar variables de procedimiento 
+    public void variabales_funPro(String[] campos) {
+        error="";
+        for (int i = 0; i < campos.length; i++) {
+          
+            if (campos[i].equals("ENTERO")) {
+               System.out.println("variable a declarar "+campos[i+1]);
+               declarar(campos[i+1], campos[i]);
+            } else if (campos[i].equals("FLOTANTE")) {
+                declarar(campos[i+1], campos[i]);
+              
+            } else if (campos[i].equals("CADENA")) {
+                declarar(campos[i+1], campos[i]) ;
+            }
+        }
+
+    }
+    
+    public  void declarar (String nombre, String tipo){
+        error="";
+       boolean estado =false;
+        for(Variable var : lista_variable){
+           if(var.getNombre().equals(nombre)){
+               estado=true;
+           }
+        }
+        
+       if(estado==false){
+            this.lista_variable.add(new Variable(nombre, "null",tipo));
+       }
+       else{error="la variable ya fue declarada "+nombre;}
+    }
+      
+    // Verificar si  la variable en funcion( variable ) existe
+  public void agregar_dato_fp(String[] campo) {
+      error="";
+        for (int i = 0; i < campo.length; i++) {
+            if ((i + 2) == (campo.length-1)) {
+                return;
+            }
+            buscar_valor(campo[i + 2]);
+        }
+    }
+
+    public void buscar_valor(String valor) {
+        boolean estado=false;
+        for ( Variable var: lista_variable) {
+            if(var.getNombre().equals(valor)){
+                this.lista_auxi.add(var.getValor());
+                estado=true;
+            }
+        }
+        if(estado==false){
+        error="la variable no esta declara "+valor;
+        }
+    }
+    
+    //metodo para agregar valores a una variable  metodo(var)
+    public void agregar_valores(){
+        for(int i=0; i<lista_variable.size();i++){
+          lista_variable.get(i).setValor(lista_auxi.get(i));
+        }
+    }
+    
+    //metodos get_set
+    public void setLista_auxi(ArrayList<String> lista_auxi) {
+        this.lista_auxi = lista_auxi;
+    }
+
+    public ArrayList<String> getLista_auxi() {
+        return lista_auxi;
+    }
+        
     
 }
