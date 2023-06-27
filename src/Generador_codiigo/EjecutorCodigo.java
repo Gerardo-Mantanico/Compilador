@@ -7,6 +7,8 @@ import compilerTools.Token;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import recursos.GeneradorBloques;
@@ -24,6 +26,7 @@ public class EjecutorCodigo {
     private Semantico  analizador_semantico;
     private Map<String, ArrayList<Token>> bloqueMetodoFunciones;
     private String error = "";
+    private String tipo="";
     public EjecutorCodigo(JTextArea textArea) {
         this.textArea = textArea;
         this.lista_variable = new ArrayList<>();
@@ -36,9 +39,9 @@ public class EjecutorCodigo {
         ArrayList<String> blocksOfCode = codeBlock.getBlocksOfCodeInOrderOfExec();
         System.out.println(" CodeBloc: " + blocksOfCode);
        // analizador_semantico.anali(tokens,textArea);
-        //analizador_semantico.imprimi();
-        executeCode(blocksOfCode, 1);
-    }
+            //analizador_semantico.imprimi();
+            executeCode(blocksOfCode, 1);
+        }
 
     private void executeCode(ArrayList<String> blocksOfCode, int repeats) {
         boolean estado_si=false;
@@ -192,7 +195,40 @@ public class EjecutorCodigo {
                         }                   
                       //funciones
                         else if(sentence.startsWith("FUNCION")){
+                            String campos [] = sentence.split(" ");
+                            tipo=campos[0];
+                              variabales_funPro(campos);
+                             if (error != "") {
+                                 this.textArea.append(error);
+                                 textArea.setForeground(Color.red);
+                                 return;
+                             }
+                             if (lista_variable.size()-1 == lista_auxi.size()) {
+                                 agregar_valores_funcion();
+                             } else {
+                               
+                                textArea.append( " error en  funcion " + campos[2]);
+                                textArea.setForeground(Color.red);
+                                return;
+                            }
                             
+                        }
+                        
+                        //return
+                        else if (sentence.startsWith("DEVOLVER")){
+                            String campo[] = sentence.split(" ");                          
+                            if(lista_variable.get(0).getTipo().equals("ENTERO")){
+                                if(Convertir(campo[1])==-1){ 
+                                    error="error";
+                                    return;}
+                                lista_variable.get(0).setValor( String.valueOf(Convertir(campo[1])));
+                            }
+                            else if (lista_variable.get(0).getTipo().equals("FLOTANTE")){
+                                 if(Convertir(campo[1])==-1){ 
+                                    error="error";
+                                    return;}
+                                lista_variable.get(0).setValor( String.valueOf(Convertir(campo[1])));
+                            }
                         }
                         
                         //procedimiento 
@@ -207,7 +243,7 @@ public class EjecutorCodigo {
                              if (lista_variable.size() == lista_auxi.size()) {
                                  agregar_valores();
                              } else {
-                                textArea.append( "t"+lista_variable.size()+ " "+lista_auxi+   " error en procedimiento  " + campo[1]);
+                                textArea.append( " "+lista_variable.size()+ " "+lista_auxi+   " error en procedimiento  " + campo[1]);
                                 textArea.setForeground(Color.red);
                                 return;
                             }
@@ -226,10 +262,17 @@ public class EjecutorCodigo {
                                         codigo.setLista_auxi(lista_auxi);
                                         codigo.ejecutarCodigo(bloqueMetodoFunciones.get(campos[0]));
                                         lista_auxi.clear();
+                                        if(codigo.getError()!=""){return;}
+                                        if(codigo.getTipo().equals("FUNCION")){
+                                            System.out.println("nombre de variable "+sentence +"el valor es "+codigo.getLista_variable().get(0).getValor());
+                                           lista_variable.add(new Variable( sentence, codigo.getLista_variable().get(0).getValor(),""));
+                                           
+                                        }
                                     }
                                  if(campos.length==3){
                                     CodigoFunciones codigo = new CodigoFunciones(this.textArea);
                                     codigo.ejecutarCodigo(bloqueMetodoFunciones.get(campos[0]));
+                                    if(codigo.getError()!=""){return;}
                                  }   
                                     
 
@@ -332,7 +375,6 @@ public class EjecutorCodigo {
     public boolean pasar_parametros(String sentence){
         boolean estado=false;
         String[] identComp = sentence.split(" ");
-        System.out.println(identComp.length);
         if(identComp.length==4){
             for(Variable var: lista_variable){
             if(var.getNombre().equals(identComp[1])){
@@ -512,7 +554,7 @@ public class EjecutorCodigo {
             buscar_valor(campo[i + 2]);
         }
     }
-
+  
     public void buscar_valor(String valor) {
         boolean estado=false;
         for ( Variable var: lista_variable) {
@@ -532,6 +574,14 @@ public class EjecutorCodigo {
           lista_variable.get(i).setValor(lista_auxi.get(i));
         }
     }
+    // funcion  para agregar valores a una variable
+    public void agregar_valores_funcion() {
+        for (int i = 0; i < lista_variable.size(); i++) {
+            if (i != 0) {
+                lista_variable.get(i).setValor(lista_auxi.get(i-1));
+            }
+        }
+    }
     
     //metodos get_set
     public void setLista_auxi(ArrayList<String> lista_auxi) {
@@ -541,6 +591,20 @@ public class EjecutorCodigo {
     public ArrayList<String> getLista_auxi() {
         return lista_auxi;
     }
-        
+
+    public String getError() {
+        return error;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public ArrayList<Variable> getLista_variable() {
+        return lista_variable;
+    }
+    
+    
+    
     
 }
