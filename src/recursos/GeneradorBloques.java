@@ -5,9 +5,12 @@
 package recursos;
 
 import compilerTools.Token;
+import java.awt.Color;
+import java.awt.TextArea;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -18,6 +21,7 @@ public class GeneradorBloques {
     private ArrayList<Token> lis;
     private Map<String, ArrayList<Token>> bloqueMetodoFunciones;
     private ArrayList<Token> listPrincipal = new ArrayList();
+    private JTextArea textArea;
  
     public GeneradorBloques(ArrayList<Token> lis) {
         this.lis = lis;
@@ -116,8 +120,11 @@ public class GeneradorBloques {
                         parentesis_a=0;
                         if( bloqueMetodoFunciones.put(tipo, listfun)==null){
                              bloqueMetodoFunciones.put(tipo, listfun);
-                        }
-                        else {System.out.println(" ya existe este metodo: "+tipo);}
+                         } else {
+                                textArea.append("Ya esta declarada : " + tipo);
+                                textArea.setForeground(Color.red);
+                             return;
+                         }
                         
                     }else {
                         listfun.add(token);
@@ -153,9 +160,9 @@ public class GeneradorBloques {
     public void setListPrincipal(ArrayList<Token> list) {
         this.listPrincipal = list;
     }
+
+    public void setTextArea(JTextArea textArea) {
+        this.textArea = textArea;
+    }
     
-    
-  public void read(){
-   System.out.println("*** "+bloqueMetodoFunciones.toString());
-  }
 }

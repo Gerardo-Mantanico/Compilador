@@ -48,6 +48,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
         this.txtAnalizarSin.setVisible(false);
         this.numeroLinea=new NumeroLinea(this.txtResultado);
         this.jScrollPane1.setRowHeaderView(numeroLinea);
+        GB.setTextArea(this.txtAnalizarSin);
     }
     
     

@@ -192,25 +192,26 @@ public class EjecutorCodigo {
                         }                   
                       //funciones
                         else if(sentence.startsWith("FUNCION")){
+                            
                         }
                         
                         //procedimiento 
-                         else if(sentence.startsWith("PROCEDIMIENTO")){
-                          String [] campo= sentence.split(" ");
-                           variabales_funPro(campo);
+                         else if (sentence.startsWith("PROCEDIMIENTO")) {
+                             String[] campo = sentence.split(" ");
+                             variabales_funPro(campo);
                              if (error != "") {
                                  this.textArea.append(error);
                                  textArea.setForeground(Color.red);
                                  return;
                              }
-                            if(lista_variable.size()==lista_auxi.size()){
-                                agregar_valores();
+                             if (lista_variable.size() == lista_auxi.size()) {
+                                 agregar_valores();
+                             } else {
+                                textArea.append( "t"+lista_variable.size()+ " "+lista_auxi+   " error en procedimiento  " + campo[1]);
+                                textArea.setForeground(Color.red);
+                                return;
                             }
-                            else{ textArea.append(" error en procedimiento suma" + campo[1] + "\n");
-                                    textArea.setForeground(Color.red);}
-                         }
-              
-                         else {
+                        } else {
                             String[] campos = sentence.split(" ");
                             if (campos.length > 2) {
                                 if (bloqueMetodoFunciones.get(campos[0]) != null) {
@@ -221,24 +222,28 @@ public class EjecutorCodigo {
                                             textArea.setForeground(Color.red);
                                             return;
                                         }
+                                        CodigoFunciones codigo = new CodigoFunciones(this.textArea);
+                                        codigo.setLista_auxi(lista_auxi);
+                                        codigo.ejecutarCodigo(bloqueMetodoFunciones.get(campos[0]));
+                                        lista_auxi.clear();
                                     }
+                                 if(campos.length==3){
                                     CodigoFunciones codigo = new CodigoFunciones(this.textArea);
-                                    codigo.setLista_auxi(lista_auxi);
-                                    System.out.println("lista auxi "+codigo.getLista_auxi().get(0));
                                     codigo.ejecutarCodigo(bloqueMetodoFunciones.get(campos[0]));
+                                 }   
+                                    
+
                                 } else {
                                     textArea.append("la funcion no esta declarada:" + campos[0] + "\n");
                                     textArea.setForeground(Color.red);
                                 }
-
                             }
                         }
                     }
                 }
-            }
         }
     }
-
+    }
     // metodo para declarar
     public boolean declarar_variable(String sentence) {
         String[] identComp = sentence.split(" ");
@@ -471,7 +476,6 @@ public class EjecutorCodigo {
         for (int i = 0; i < campos.length; i++) {
           
             if (campos[i].equals("ENTERO")) {
-               System.out.println("variable a declarar "+campos[i+1]);
                declarar(campos[i+1], campos[i]);
             } else if (campos[i].equals("FLOTANTE")) {
                 declarar(campos[i+1], campos[i]);
