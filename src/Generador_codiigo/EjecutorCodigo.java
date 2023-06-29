@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import recursos.GeneradorBloques;
@@ -102,8 +104,8 @@ public class EjecutorCodigo {
                          else if (sentence.startsWith("#")) {
                              String campo[] = sentence.split(" ");
                              if (campo.length > 4 && campo[4].equals("(")) {
-                                 String subCampo[] = sentence.split(":");
-                                 System.out.println("Asignacion  ////p"+subCampo[1]);
+                                   String subCampo[] = sentence.split(":");
+                                 funcion(subCampo[1]);
                                  boolean estado=false;
                                  for(Variable  v: lista_variable){
                                      if(v.getNombre().equals(subCampo[1])){
@@ -125,6 +127,8 @@ public class EjecutorCodigo {
                                          return;
                                  }
                              }
+                             
+                             
                              else { if(pasar_parametros(sentence) == false) {
                                  return;
   }                           }
@@ -235,6 +239,7 @@ public class EjecutorCodigo {
                                
                                 textArea.append( " error en  funcion " + campos[2]);
                                 textArea.setForeground(Color.red);
+                                error=" error en  la  funcion " + campos[2];
                                 return;
                             }
                             
@@ -250,11 +255,12 @@ public class EjecutorCodigo {
                                 lista_variable.get(0).setValor( String.valueOf(Convertir(campo[1])));
                             }
                             else if (lista_variable.get(0).getTipo().equals("FLOTANTE")){
-                                 if(Convertir(campo[1])==-1){ 
+                                 if(Convertir_float(campo[1])==-1){ 
                                     error="error";
                                     return;}
-                                lista_variable.get(0).setValor( String.valueOf(Convertir(campo[1])));
+                                lista_variable.get(0).setValor( String.valueOf(Convertir_float(campo[1])));
                             }
+                            
                         }
                         
                         //procedimiento 
@@ -269,8 +275,9 @@ public class EjecutorCodigo {
                              if (lista_variable.size() == lista_auxi.size()) {
                                  agregar_valores();
                              } else {
-                                textArea.append( " "+lista_variable.size()+ " "+lista_auxi+   " error en procedimiento  " + campo[1]);
+                                textArea.append( " error en procedimiento  " + campo[1]);
                                 textArea.setForeground(Color.red);
+                                error="error en procedimiento  " + campo[1];
                                 return;
                             }
                         } else {
@@ -401,6 +408,7 @@ public class EjecutorCodigo {
     public boolean pasar_parametros(String sentence){
         boolean estado=false;
         String[] identComp = sentence.split(" ");
+         System.out.println(identComp[3]);
         if(identComp.length==4){
             for(Variable var: lista_variable){
             if(var.getNombre().equals(identComp[1])){
@@ -408,6 +416,20 @@ public class EjecutorCodigo {
               estado=true;
             }
         }}
+        else if (identComp.length > 6 && identComp[3].equals("\"")) {
+            String auxi="";
+            Pattern pattern = Pattern.compile("\"([^\"\n]*)\"");
+            Matcher matcher = pattern.matcher(sentence);
+            while (matcher.find()) {
+                auxi = matcher.group(1);
+            }
+            for (Variable var : lista_variable) {
+                if (var.getNombre().equals(identComp[1])) {
+                    var.setValor(auxi);
+                    estado = true;
+                }
+            }
+        }
         else if (identComp.length==6){
             for(Variable var:lista_variable){
               if(var.getNombre().equals(identComp[1])){
@@ -429,6 +451,27 @@ public class EjecutorCodigo {
         }
         return estado;
     }
+   
+    //metodo para pasar un String 
+    
+     //metodo para pasar parametros
+    public boolean pasar_parametros_cadena(String sentence){
+        boolean estado=false;
+        String[] identComp = sentence.split(" ");
+        System.out.println(identComp[3]);
+        for(Variable var: lista_variable){
+            if(var.getNombre().equals(identComp[1])){
+              var.setValor(identComp[4]);
+              estado=true;
+            }}
+        
+        if(estado==false){
+          this.textArea.append("Variable no declarada :" +sentence); 
+            textArea.setForeground(Color.red);
+        }
+        return estado;
+    }
+    
 //meto para realizar operaciones matematicas
     public String operaciones_basicas(float var1, float var2, String signo) {
         String resultado=" ";
@@ -577,7 +620,14 @@ public class EjecutorCodigo {
             if ((i + 2) == (campo.length-1)) {
                 return;
             }
-            buscar_valor(campo[i + 2]);
+            try {
+              int var=Integer.valueOf(campo[i+2]);
+              lista_auxi.add(campo[i+2]);
+            }
+            catch(NumberFormatException ex){
+                buscar_valor(campo[i + 2]);
+            }
+            
         }
     }
   
@@ -608,6 +658,61 @@ public class EjecutorCodigo {
             }
         }
     }
+    
+    //  metodo para buscar  funscion
+    public void funcion(String campos) {
+        String sub[] = campos.split("\\(");
+        //bloqueMetodoFunciones.get("MULTIPLICACION")
+        System.out.println("funcion" + sub[0]);
+        String a =sub[0].trim();
+        if (bloqueMetodoFunciones.get(a) != null) {
+            agregar_datos_fp(campos);
+            if (error != "") {
+                this.textArea.append(error);
+                textArea.setForeground(Color.red);
+                return;
+            }
+            CodigoFunciones codigo = new CodigoFunciones(this.textArea);
+            codigo.setLista_auxi(lista_auxi);
+            codigo.ejecutarCodigo(bloqueMetodoFunciones.get(a));
+            lista_auxi.clear();
+            if (codigo.getError() != "") {
+                return;
+            }
+                if (codigo.getTipo().equals("FUNCION")) {
+                    lista_variable.add(new Variable(campos, codigo.getLista_variable().get(0).getValor(), "FUNCION"));
+                }
+            
+        } else {
+            textArea.append("la funcion no esta declarada: " + campos + "\n");
+            textArea.setForeground(Color.red);
+        }
+
+    }
+    
+    public void agregar_datos_fp(String campo) {
+        error="";
+        Pattern pattern = Pattern.compile("\\b(\\w+)\\b");
+        Matcher matcher = pattern.matcher(campo);
+        boolean primerResultado = true; 
+        while (matcher.find()) {
+            String variable = matcher.group(1);
+            if (primerResultado) {
+                primerResultado = false; 
+            } else {
+                  try {
+                    int var = Integer.valueOf(variable);
+                    lista_auxi.add(variable);
+                } catch (NumberFormatException ex) {
+                    buscar_valor(variable);
+                }
+            }
+        }
+
+    }
+
+    
+    
     
     //metodos get_set
     public void setLista_auxi(ArrayList<String> lista_auxi) {

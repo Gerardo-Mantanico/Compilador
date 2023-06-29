@@ -9,8 +9,4 @@ public class CodigoFunciones extends EjecutorCodigo{
         super(textArea);
     }
     
-    
-   
-    
-   
 }

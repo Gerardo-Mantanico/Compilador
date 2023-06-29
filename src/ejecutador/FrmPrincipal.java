@@ -25,6 +25,7 @@ import java_cup.runtime.Symbol;
 import javax.swing.JFileChooser;
 import recursos.GeneradorBloques;
 import recursos.NumeroLinea;
+import semantica.SemanticaFp;
 import sintactica.Sintax;
 
 
@@ -41,6 +42,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private EjecutorCodigo ejecutorCodigo;
     private NumeroLinea numeroLinea;
     private GeneradorBloques   GB=new GeneradorBloques(tokens);
+    private SemanticaFp semenaticafp;
     public FrmPrincipal() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -103,9 +105,9 @@ public class FrmPrincipal extends javax.swing.JFrame {
             }
         });
 
-        txtResultado.setBackground(new java.awt.Color(255, 255, 255));
+        txtResultado.setBackground(new java.awt.Color(0, 0, 0));
         txtResultado.setColumns(20);
-        txtResultado.setForeground(new java.awt.Color(0, 0, 0));
+        txtResultado.setForeground(new java.awt.Color(102, 102, 255));
         txtResultado.setRows(5);
         jScrollPane1.setViewportView(txtResultado);
 
@@ -127,9 +129,9 @@ public class FrmPrincipal extends javax.swing.JFrame {
                         .addComponent(btnAnalizarSin)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 529, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 277, Short.MAX_VALUE)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 578, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 709, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 695, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(61, 61, 61))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -175,8 +177,13 @@ public class FrmPrincipal extends javax.swing.JFrame {
             txtAnalizarSin.setText("Analisis realizado correctamente \n");
             txtAnalizarSin.setForeground(new Color(25, 111, 61));
             GB.bloques();
+            this.semenaticafp= new SemanticaFp(GB.getBloqueMetodoFunciones(),GB.getListPrincipal());
+            if(semenaticafp.getError()!=""){
+                txtAnalizarSin.setText(semenaticafp.getError());
+                txtAnalizarSin.setForeground(Color.red);
+                return;}
             ejecutorCodigo.setBloqueMetodoFunciones(GB.getBloqueMetodoFunciones());
-            ejecutorCodigo.ejecutarCodigo(GB.getListPrincipal()); 
+            ejecutorCodigo.ejecutarCodigo(GB.getListPrincipal());
         } catch (Exception ex) {
             Symbol sym = s.getS();
             txtAnalizarSin.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + ", Texto: \"" + sym.value + "\"");
