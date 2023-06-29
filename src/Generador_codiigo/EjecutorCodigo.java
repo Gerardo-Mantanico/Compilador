@@ -122,6 +122,8 @@ public class EjecutorCodigo {
                                          estado=true;
                                      }
                                  }
+                                 
+                                 
                                  if(estado==false){textArea.append("la  funcion no existe "+subCampo[1]+ "\n");
                                          textArea.setForeground(Color.red);
                                          return;
@@ -237,7 +239,7 @@ public class EjecutorCodigo {
                                  agregar_valores_funcion();
                              } else {
                                
-                                textArea.append( " error en  funcion " + campos[2]);
+                                textArea.append( " Error en  funcion " + campos[2]);
                                 textArea.setForeground(Color.red);
                                 error=" error en  la  funcion " + campos[2];
                                 return;
@@ -488,7 +490,7 @@ public class EjecutorCodigo {
                 
             case "/":
                 if(var2!=0){
-                    resul=var1-var2;
+                    resul=var1/var2;
                 }
                 break;
             default:
@@ -508,6 +510,11 @@ public class EjecutorCodigo {
                     numero = Float.parseFloat(vare.getValor());
                 }
             }
+        }
+         if(numero==-1){ 
+            this.textArea.append("Variable no declarada :" +var); 
+            textArea.setForeground(Color.red);
+            return -1;
         }
         return numero;
     }
@@ -617,20 +624,25 @@ public class EjecutorCodigo {
   public void agregar_dato_fp(String[] campo) {
       error="";
         for (int i = 0; i < campo.length; i++) {
-            if ((i + 2) == (campo.length-1)) {
+            if ((i + 2) == (campo.length - 1)) {
                 return;
             }
             try {
-              int var=Integer.valueOf(campo[i+2]);
-              lista_auxi.add(campo[i+2]);
+                int var = Integer.valueOf(campo[i + 2]);
+                lista_auxi.add(campo[i + 2]);
+            } catch (NumberFormatException ex) {
+                try {
+                    float var = Float.valueOf(campo[i + 2]);
+                    lista_auxi.add(String.valueOf(var));
+                } catch (NumberFormatException ex2) {
+                    buscar_valor(campo[i + 2]);
+                }
+
             }
-            catch(NumberFormatException ex){
-                buscar_valor(campo[i + 2]);
-            }
-            
+
         }
     }
-  
+
     public void buscar_valor(String valor) {
         boolean estado=false;
         for ( Variable var: lista_variable) {
@@ -662,7 +674,6 @@ public class EjecutorCodigo {
     //  metodo para buscar  funscion
     public void funcion(String campos) {
         String sub[] = campos.split("\\(");
-        //bloqueMetodoFunciones.get("MULTIPLICACION")
         System.out.println("funcion" + sub[0]);
         String a =sub[0].trim();
         if (bloqueMetodoFunciones.get(a) != null) {
@@ -700,11 +711,17 @@ public class EjecutorCodigo {
             if (primerResultado) {
                 primerResultado = false; 
             } else {
+                //// ES AACA  no era aca  :(
                   try {
                     int var = Integer.valueOf(variable);
                     lista_auxi.add(variable);
                 } catch (NumberFormatException ex) {
-                    buscar_valor(variable);
+                     try {
+                          float vare = Float.valueOf(variable);
+                          lista_auxi.add(String.valueOf(variable));
+                      } catch (NumberFormatException ex2) {
+                          buscar_valor(variable);
+                      }
                 }
             }
         }
